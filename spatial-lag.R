@@ -86,6 +86,7 @@ wClient$
 
 wfsurl$query <- list(service = "wfs",
                      request = "GetFeature",
+                     # typeName = "avoindata:Piirijako_osaalue",
                      typeName = "avoindata:Kaupunginosajako",
                      srsName = "EPSG:3879")
 
@@ -93,13 +94,22 @@ request <- build_url(wfsurl)
 
 helsinkiDistricts <- read_sf(request)
 
-units::set_units(st_area(helsinkiDistricts),km^2)
+class(helsinkiDistricts)
 
-st_is_longlat(helsinkiDistricts)
+helsinkiDistricts
+
 st_set_crs(helsinkiDistricts, 3879)
-st_crs(helsinkiDistricts)
+
+units::set_units(st_area(helsinkiDistricts),m^2)
+
+# TO DO: set_units seems to be unreliable, wonder why
 
 helsinkiDistricts <- helsinkiDistricts %>% mutate(area = units::set_units(st_area(helsinkiDistricts), km^2))
+
+sum(helsinkiDistricts$area)
+
+# sum of st_areas 715,4074 km^2
+# MML stats 715,48 km^2
 
 # --- draw map to verify
 
@@ -112,7 +122,7 @@ wfsUrl <- "http://geo.stat.fi/geoserver/vaestoalue/wfs?"
 
 # ==== REFERENCES ====
 
-# 1) Guerry data presentation by Josiah Parry 
+# 1) Introduction to Spatial Lags by Josiah Parry https://www.youtube.com/watch?v=abrQBSdTk7E
 # 2) Boston data presentation by Josiah Parry https://www.youtube.com/watch?v=i_MA1U6SJ1Y&t=3351s 
 # 3) Using WFS Services in R https://inbo.github.io/tutorials/tutorials/spatial_wfs_services/
 # 4) EPGS:3879 https://epsg.io/3879
